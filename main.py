@@ -3,19 +3,19 @@ from fastapi import Depends
 from fastapi import Header
 from fastapi.middleware.cors import CORSMiddleware
 from jose import jwt
-from passlib.context import CryptContext
+
 import sqlite3
 
 SECRET_KEY = "secret123"
 ALGORITHM = "HS256"
 
-pwd_context = CryptContext(schemes=["bcrypt"])
+import hashlib
 
 def hash_password(pw):
-    return pwd_context.hash(pw)
+    return hashlib.sha256(pw.encode()).hexdigest()
 
 def verify_password(pw, hashed):
-    return pwd_context.verify(pw, hashed)
+    return hashlib.sha256(pw.encode()).hexdigest() == hashed
 
 def get_current_user(authorization: str = Header(None)):
     if not authorization:
