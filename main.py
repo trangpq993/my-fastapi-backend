@@ -34,11 +34,16 @@ app = FastAPI()
 # CORS cho React
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://my-react-frontend-2785j06mc-trangpq993s-projects.vercel.app"],
+    #allow_origins=["http://localhost:3000","https://my-react-frontend-2785j06mc-trangpq993s-projects.vercel.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.options("/{path:path}")
+def options_handler():
+    return {}
 
 def get_db():
     return sqlite3.connect("app.db")
@@ -133,15 +138,3 @@ def login(user: dict):
     return {"access_token": token}
 
 from fastapi import Header
-
-def get_current_user(authorization: str = Header(None)):
-    if not authorization:
-        return None
-
-    token = authorization.replace("Bearer ", "")
-
-    try:
-        data = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return data["user_id"]
-    except:
-        return None
